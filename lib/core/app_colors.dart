@@ -27,4 +27,5 @@ class AppColors {
   // static final Color secondary1 = Color(0xFF00567C);
 
   static final Color red_error = Color(0xFFF6314C);
+  static final Color green = Color(0xFF005555);
 }
