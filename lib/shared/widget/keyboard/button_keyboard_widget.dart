@@ -22,21 +22,24 @@ class ButtonKeyboardWidget extends StatefulWidget {
 class _ButtonKeyboardWidgetState extends State<ButtonKeyboardWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: widget.label.isNotEmpty ? 32 : 48,
-      height: 46,
-      // padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: widget.backgroundColor,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          AppShadows.shadow0,
-        ],
+    return InkWell(
+      onTap: widget.onPressed,
+      child: Container(
+        width: widget.label.isNotEmpty ? 32 : 48,
+        height: 46,
+        // padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: widget.backgroundColor,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            AppShadows.shadow0,
+          ],
+        ),
+        child: widget.label.isNotEmpty
+            ? Text(widget.label.toUpperCase(), style: AppTextStyles.p_bold)
+            : widget.icon,
       ),
-      child: widget.label.isNotEmpty
-          ? Text(widget.label.toUpperCase(), style: AppTextStyles.p_bold)
-          : widget.icon,
     );
   }
 }

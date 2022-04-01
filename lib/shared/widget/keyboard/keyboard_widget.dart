@@ -1,199 +1,120 @@
-import 'package:cinco/shared/widget/keyboard/button_keyboard_widget.dart';
+import 'dart:ui';
+
+import 'package:cinco/shared/model/letter_model.dart';
 import 'package:flutter/material.dart';
+
+import 'package:cinco/shared/widget/keyboard/button_keyboard_widget.dart';
 
 import '../../../core/core.dart';
 
-class KeyboardWidget extends StatefulWidget {
-  const KeyboardWidget({Key? key}) : super(key: key);
+const _qwerty = [
+  ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+  ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+  ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DEL'],
+];
 
-  @override
-  State<KeyboardWidget> createState() => _KeyboardWidgetState();
-}
+class KeyboardWidget extends StatelessWidget {
+  const KeyboardWidget(
+      {Key? key,
+      required this.onKeyTapped,
+      required this.onDeleteTapped,
+      required this.letters,
+      required this.onEnterTapped})
+      : super(key: key);
 
-class _KeyboardWidgetState extends State<KeyboardWidget> {
+  final void Function(String) onKeyTapped;
+  final VoidCallback onDeleteTapped;
+  final VoidCallback onEnterTapped;
+  final Set<LetterModel> letters;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(top: 32, bottom: 64, left: 8, right: 8),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ButtonKeyboardWidget(
-                label: "Q",
-                backgroundColor: AppColors.white0,
-                onPressed: () => {},
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: _qwerty
+            .map((keyRow) => Row(
+                  children: keyRow.map((letter) {
+                    if (letter == 'DEL') {
+                      return _KeyBoardButton.delete(onTap: onDeleteTapped);
+                    } else if (letter == 'ENTER') {
+                      return _KeyBoardButton.enter(onTap: onEnterTapped);
+                    }
+                    final letterKey = letters.firstWhere(
+                      (e) => e.value == letter,
+                      orElse: () => LetterModel.empty(),
+                    );
+
+                    return _KeyBoardButton(
+                      letter: letter,
+                      onTap: () => onKeyTapped,
+                      backgroundColor: letterKey != LetterModel.empty()
+                          ? letterKey.backgroundColor
+                          : AppColors.grey0,
+                    );
+                  }).toList() as List<Widget>,
+                ))
+            .toList());
+  }
+}
+
+class _KeyBoardButton extends StatelessWidget {
+  final double height;
+  final double width;
+  final VoidCallback onTap;
+  final Color backgroundColor;
+  final String letter;
+
+  _KeyBoardButton({
+    Key? key,
+    this.height = 48,
+    this.width = 28,
+    required this.onTap,
+    required this.backgroundColor,
+    required this.letter,
+  }) : super(key: key);
+
+  factory _KeyBoardButton.delete({
+    required VoidCallback onTap,
+  }) {
+    return _KeyBoardButton(
+      width: 48,
+      onTap: onTap,
+      backgroundColor: AppColors.grey0,
+      letter: 'DEL',
+    );
+  }
+
+  factory _KeyBoardButton.enter({
+    required VoidCallback onTap,
+  }) {
+    return _KeyBoardButton(
+      width: 48,
+      onTap: onTap,
+      backgroundColor: AppColors.grey0,
+      letter: 'ENTER',
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 2.0),
+      child: Material(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            height: height,
+            width: width,
+            child: Center(
+              child: Text(
+                letter,
+                style: AppTextStyles.h6_bold,
               ),
-              ButtonKeyboardWidget(
-                label: "W",
-                backgroundColor: AppColors.white0,
-                onPressed: () => {},
-              ),
-              ButtonKeyboardWidget(
-                label: "E",
-                backgroundColor: AppColors.white0,
-                onPressed: () => {},
-              ),
-              ButtonKeyboardWidget(
-                label: "R",
-                backgroundColor: AppColors.white0,
-                onPressed: () => {},
-              ),
-              ButtonKeyboardWidget(
-                label: "T",
-                backgroundColor: AppColors.white0,
-                onPressed: () => {},
-              ),
-              ButtonKeyboardWidget(
-                label: "Y",
-                backgroundColor: AppColors.white0,
-                onPressed: () => {},
-              ),
-              ButtonKeyboardWidget(
-                label: "U",
-                backgroundColor: AppColors.white0,
-                onPressed: () => {},
-              ),
-              ButtonKeyboardWidget(
-                label: "I",
-                backgroundColor: AppColors.white0,
-                onPressed: () => {},
-              ),
-              ButtonKeyboardWidget(
-                label: "O",
-                backgroundColor: AppColors.white0,
-                onPressed: () => {},
-              ),
-              ButtonKeyboardWidget(
-                label: "P",
-                backgroundColor: AppColors.white0,
-                onPressed: () => {},
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8, right: 8, top: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ButtonKeyboardWidget(
-                  label: "A",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "S",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "D",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "F",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "G",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "H",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "Q",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "J",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "K",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "L",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-              ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8, right: 8, top: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ButtonKeyboardWidget(
-                  label: "",
-                  backgroundColor: AppColors.white0,
-                  icon: Icon(
-                    Icons.check,
-                    color: AppColors.green,
-                    size: 32,
-                  ),
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "Z",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "X",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "C",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "V",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "B",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "N",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "M",
-                  backgroundColor: AppColors.white0,
-                  onPressed: () => {},
-                ),
-                ButtonKeyboardWidget(
-                  label: "",
-                  backgroundColor: AppColors.white0,
-                  icon: Icon(
-                    Icons.delete_forever,
-                    size: 32,
-                    color: AppColors.red_error,
-                  ),
-                  onPressed: () => {},
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

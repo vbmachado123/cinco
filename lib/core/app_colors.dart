@@ -28,4 +28,9 @@ class AppColors {
 
   static final Color red_error = Color(0xFFF6314C);
   static final Color green = Color(0xFF005555);
+
+  // Word
+  static final Color inWordColor = Color(0xFFB49F3A);
+  static final Color correctColor = Color(0xFF005555);
+  static final Color notInWordColor = Color(0xFF3A3A3C);
 }
