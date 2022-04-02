@@ -2,26 +2,17 @@ import 'dart:math';
 
 import 'package:cinco/shared/model/letter_model.dart';
 import 'package:cinco/shared/model/word_model.dart';
-import 'package:cinco/shared/widget/alert_dialog_widget.dart';
-import 'package:cinco/shared/widget/word/item_word_widget.dart';
-import 'package:cinco/shared/widget/keyboard/keyboard_widget.dart';
+import 'package:cinco/shared/widget/grid_widget.dart';
+import 'package:cinco/shared/widget/keyboard_widget.dart';
 import 'package:cinco/shared/widget/toolbar_widget.dart';
-import 'package:cinco/shared/widget/word/word_widget.dart';
+
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../core/core.dart';
-import '../../shared/widget/board_widget.dart';
-import '../../shared/widget/keyboard/button_keyboard_widget.dart';
-import '../../shared/widget/words_list.dart' as wordsList;
-
-enum GameStatus {
-  playing,
-  submitting,
-  lost,
-  won,
-}
+import '../../shared/widget/alert_dialog_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -31,205 +22,145 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<WordModel> _board = List.generate(
-    5,
-    (_) => WordModel(
-        letters: List.generate(
-      5,
-      (_) => LetterModel.empty(),
-    )),
-  );
-
-  final List<List<GlobalKey<FlipCardState>>> _flipCardKeys = List.generate(
-      5, (_) => List.generate(5, (_) => GlobalKey<FlipCardState>()));
-
-  String keyPressed = "";
-
-  getKeyPressed() {
-    print('keyPressed Home: $keyPressed');
-  }
-
-  int _currentWordIndex = 0;
-  WordModel? get _currentWord =>
-      _currentWordIndex < _board.length ? _board[_currentWordIndex] : null;
-
-  WordModel _solution = WordModel.fromString(wordsList
-      .getWords[Random().nextInt(wordsList.getWords.length)]
-      .toUpperCase());
+  final Set<LetterModel> _keyboardLetters = {};
 
   initState() {
-    print('==========================================================');
-    print(_solution);
-    print('==========================================================');
+    // openDialog();
   }
 
-  final Set<LetterModel> _keyboardLetters = {};
+  openDialog() {
+    Get.dialog(
+      AlertDialogWidget(
+        title: '',
+        currentBody: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Tutorial',
+              style: AppTextStyles.h4_bold_primary,
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Você tem 5 tentativas para acertar a palavra de 5 letras.\n\n Após finalizar uma palavra, clique no botão ✓ para confirmar.',
+              style: AppTextStyles.p_regular,
+            ),
+            SizedBox(height: 32),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: AppColors.correctColor,
+              ),
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                'As letras em verde fazem parte da palavra e estão na posição correta.',
+                style: AppTextStyles.p_regular_white,
+              ),
+            ),
+            SizedBox(height: 16),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: AppColors.inWordColor,
+              ),
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                'As letras em amarelo fazem parte da palavra e não estão na posição correta.',
+                style: AppTextStyles.p_regular_white,
+              ),
+            ),
+            SizedBox(height: 16),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: AppColors.notInWordColor,
+              ),
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                'As letras em cinza não fazem parte da palavra.',
+                style: AppTextStyles.p_regular_white,
+              ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'As palavras inválidas são aquelas que ainda não estão presentes no dicionário do jogo, continue tentando!',
+              style: AppTextStyles.p_regular,
+            ),
+            SizedBox(height: 32),
+            InkWell(
+              onTap: () => Get.back(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: AppColors.primary0,
+                  boxShadow: [
+                    AppShadows.shadow0,
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    'Ok, vamos nessa!',
+                    style: AppTextStyles.h6_bold_white,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Image.asset(
+                  'assets/tevitto.png',
+                  height: 28,
+                ),
+
+                // SvgPicture.asset(
+                //   'assets/tevitto.svg',
+                //   height: 32,
+
+                // ),
+                Text(
+                  'V: 1.0.1 - 2022',
+                  style: AppTextStyles.p_bold,
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white0,
-      appBar: ToolbarWidget('5INCO'),
+      appBar: ToolbarWidget('5INCO', openDialog),
       body: Container(
           padding: const EdgeInsets.only(top: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              BoardWidget(board: _board, flipCardKeys: _flipCardKeys),
+              const GridWidget(),
               Container(
+                padding: const EdgeInsets.only(
+                    top: 32, bottom: 64, left: 8, right: 8),
                 width: double.maxFinite,
-                // height: Get.height * 0.3,
                 decoration: BoxDecoration(
                   color: AppColors.secondary0,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: const Radius.circular(32),
+                    topRight: const Radius.circular(32),
                   ),
                 ),
-                child: Center(
-                  // child: KeyboardWidget(
-                  //   keyPressed: keyPressed,
-                  //   getKeyPressed: getKeyPressed,
-                  // ),
-                  child: Container(
-                    padding: const EdgeInsets.only(
-                        top: 32, bottom: 64, left: 8, right: 8),
-                    child: Column(
-                      children: [
-                        KeyboardWidget(
-                          onKeyTapped: _onKeyTapped,
-                          onDeleteTapped: _onDeleteTapped,
-                          onEnterTapped: _onEnterTapped,
-                          letters: _keyboardLetters,
-                        ),
-                      ],
-                    ),
-                  ),
+                child: const Center(
+                  child: KeyboardWidget(),
                 ),
               ),
             ],
           )),
     );
-  }
-
-  var _gameStatus = GameStatus.playing;
-
-  void _onKeyTapped(String letter) {
-    if (_gameStatus == GameStatus.playing) {
-      setState(() => _currentWord?.addLetter(letter));
-    }
-  }
-
-  void _onDeleteTapped() {
-    if (_gameStatus == GameStatus.playing) {
-      setState(() => _currentWord?.removeLetter());
-    }
-  }
-
-  void _onEnterTapped() async {
-    if (_gameStatus == GameStatus.playing &&
-        _currentWord != null &&
-        !_currentWord!.letters.contains(LetterModel.empty())) {
-      _gameStatus = GameStatus.submitting;
-
-      for (var i = 0; i < _currentWord!.letters.length; i++) {
-        final currentWordLetter = _currentWord!.letters[i];
-        final currentSolutionLetter = _solution.letters[i];
-        setState(() {
-          if (currentWordLetter == currentSolutionLetter) {
-            currentWordLetter.copyWith(status: LetterStatus.correct);
-          } else if (_solution.letters.contains(currentSolutionLetter)) {
-            _currentWord!.letters[i] = currentWordLetter.copyWith(
-              status: LetterStatus.inWord,
-            );
-          } else {
-            _currentWord!.letters[i] = currentWordLetter.copyWith(
-              status: LetterStatus.notInWord,
-            );
-          }
-        });
-
-        final letter = _keyboardLetters.firstWhere(
-          (e) => e.value == currentWordLetter.value,
-          orElse: () => LetterModel.empty(),
-        );
-        if (letter.status != LetterStatus.correct) {
-          _keyboardLetters
-              .removeWhere((e) => e.value == currentWordLetter.value);
-          _keyboardLetters.add(_currentWord!.letters[i]);
-        }
-
-        await Future.delayed(
-          const Duration(milliseconds: 50),
-          () => _flipCardKeys[_currentWordIndex][i].currentState?.toggleCard(),
-        );
-      }
-
-      _checkIfWinOrLost();
-    }
-  }
-
-  void _checkIfWinOrLost() {
-    if (_currentWord!.wordString == _solution.wordString) {
-      _gameStatus = GameStatus.won;
-      Get.dialog(AlertDialogWidget(
-          currentBody: Column(
-        children: [
-          Expanded(
-            child: Text(
-              'Parabéns!! Você ganhou!!',
-              style: AppTextStyles.p_regular,
-            ),
-          )
-        ],
-      )));
-    } else if (_currentWordIndex + 1 >= _board.length) {
-      _gameStatus = GameStatus.lost;
-      Get.dialog(AlertDialogWidget(
-          currentBody: Column(
-        children: [
-          Expanded(
-            child: Text(
-              'Putsss!! Não foi dessa vez...',
-              style: AppTextStyles.p_regular,
-            ),
-          )
-        ],
-      )));
-    } else {
-      _gameStatus = GameStatus.playing;
-    }
-    _currentWordIndex += 1;
-  }
-
-  void _restart() {
-    setState(() {
-      _gameStatus = GameStatus.playing;
-      _currentWordIndex = 0;
-      _board
-        ..clear()
-        ..addAll(List.generate(
-          5,
-          (_) => WordModel(
-              letters: List.generate(
-            5,
-            (_) => LetterModel.empty(),
-          )),
-        ));
-
-      _solution = WordModel.fromString(wordsList
-          .getWords[Random().nextInt(wordsList.getWords.length)]
-          .toUpperCase());
-
-      _flipCardKeys
-        ..clear()
-        ..addAll(
-          List.generate(
-            5,
-            (_) => List.generate(5, (_) => GlobalKey<FlipCardState>()),
-          ),
-        );
-      _keyboardLetters.clear();
-    });
   }
 }

@@ -32,5 +32,5 @@ class AppColors {
   // Word
   static final Color inWordColor = Color(0xFFB49F3A);
   static final Color correctColor = Color(0xFF005555);
-  static final Color notInWordColor = Color(0xFF3A3A3C);
+  static final Color notInWordColor = Color.fromARGB(255, 107, 107, 108);
 }
