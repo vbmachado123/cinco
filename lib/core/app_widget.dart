@@ -28,7 +28,7 @@ class AppWidget extends StatelessWidget {
       locale: DevicePreview.locale(context),
       theme: ThemeData(
         // primarySwatch: MaterialColor(1, ),
-        primarySwatch: Colors.yellow,
+        primarySwatch: Colors.blue,
         focusColor: AppColors.primary0,
       ),
       getPages: [

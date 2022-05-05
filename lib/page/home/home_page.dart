@@ -138,7 +138,9 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: AppColors.white0,
       appBar: ToolbarWidget('5INCO', openDialog),
       body: Container(
-          padding: const EdgeInsets.only(top: 16),
+          height: Get.height,
+          width: Get.width,
+          // padding: const EdgeInsets.only(top: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,

@@ -17,7 +17,7 @@ class LetterBoxWidget extends StatelessWidget {
       : super(key: key);
 
   Color? getBgColor() {
-    if (!attempted) return null;
+    if (!attempted) return AppColors.white0;
     if (!correctWord.contains(letter)) return AppColors.notInWordColor;
     if (correctWord.indexOf(letter) == pos) return AppColors.correctColor;
     return AppColors.inWordColor;
@@ -30,7 +30,7 @@ class LetterBoxWidget extends StatelessWidget {
 
   Color? getTextColor() {
     if (!attempted) return AppColors.black0;
-    return AppColors.white0;
+    return AppColors.black0;
   }
 
   @override
@@ -45,10 +45,13 @@ class LetterBoxWidget extends StatelessWidget {
         border: getBorder(),
         color: getBgColor(),
         borderRadius: BorderRadius.all(Radius.circular(8)),
+        boxShadow: [
+          AppShadows.shadow0,
+        ],
       ),
       child: Text(
-        letter,
-        style: AppTextStyles.h6_bold,
+        letter.toUpperCase(),
+        style: !attempted ? AppTextStyles.h6_bold : AppTextStyles.h6_bold_white,
       ),
     );
   }

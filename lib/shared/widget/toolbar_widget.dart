@@ -1,8 +1,11 @@
 import 'package:cinco/core/core.dart';
 import 'package:cinco/page/home/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
+import '../../provider/game_state_provider.dart';
 import 'alert_dialog_widget.dart';
 
 class ToolbarWidget extends PreferredSize {
@@ -33,11 +36,14 @@ class ToolbarWidget extends PreferredSize {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        InkWell(
-                            onTap: () => Get.offAll(const HomePage()),
-                            child: Icon(Icons.settings,
-                                size: 32, color: AppColors.primary0)),
-                        Text(label, style: AppTextStyles.h6_bold_primary),
+                        SettingsButton(),
+
+                        // Text(label, style: AppTextStyles.h6_bold_primary),
+                        // assets/icone.png
+                        Image.asset(
+                          'assets/logo.png',
+                          width: 94,
+                        ),
                         InkWell(
                             onTap: () => openDialog(),
                             child: Icon(Icons.help_outline_outlined,
@@ -50,4 +56,25 @@ class ToolbarWidget extends PreferredSize {
             ),
           ),
         );
+}
+
+class SettingsButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gameSettings = ref.watch(gameSettingsProvider);
+    final gameSettingsNotifier = ref.read(gameSettingsProvider.notifier);
+
+    void _newWord() {
+      final gameState = ref.read(gameStateProvider);
+      gameSettingsNotifier.updateAttempts(5);
+    }
+
+    return InkWell(
+        onTap: () => _newWord(),
+        child: Icon(
+          Icons.settings,
+          size: 32,
+          color: AppColors.primary0,
+        ));
+  }
 }
